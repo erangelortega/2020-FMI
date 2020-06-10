@@ -65,9 +65,12 @@ prestamoDirecto cantidadAprestar = actualizarDeuda (+) (cantidadAprestar * 150 /
     y además que el ingreso per cápita disminuya en 20% si los puestos de trabajo son más de 100 ó 15% en caso contrario -}
 
 reduccion :: PuestosDeTrabajo -> Estrategia
-reduccion puestosReducir pais
-    | puestosReducir > 100 = modificarIPC 20 . reducirPuestosSP puestosReducir $ pais
-    | otherwise = modificarIPC 15 . reducirPuestosSP puestosReducir $ pais 
+reduccion puestosReducir pais = modificarIPC (porcentaje puestosReducir) . reducirPuestosSP puestosReducir $ pais
+
+porcentaje :: PuestosDeTrabajo -> Float
+porcentaje puestosReducir
+    | puestosReducir > 100 = 20
+    | otherwise = 15
 
 
     {-c) darle a una empresa afín al FMI la explotación de alguno de los recursos naturales, esto disminuye 2 millones de dólares la deuda que el país mantiene 
@@ -133,7 +136,7 @@ multiplicar el ingreso per cápita por la población activa (privada y pública)
 ordenadaPorPBI :: Pais -> [Receta] -> Bool
 ordenadaPorPBI _ [] = True
 ordenadaPorPBI _ [x] = True
-ordenadaPorPBI pais (x:y:xs) = pbi (x pais) > pbi (y pais) && ordenadaPorPBI pais xs 
+ordenadaPorPBI pais (x:y:xs) = pbi (x pais) < pbi (y pais) && ordenadaPorPBI pais xs 
 
 
 -- PUNTO 6 --
